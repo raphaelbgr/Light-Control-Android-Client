@@ -60,6 +60,8 @@ dependencies {
     def nav_version = "1.0.0-alpha05"
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version" // use -ktx for Kotlin
+
+    implementation 'org.fusesource.mqtt-client:mqtt-client:1.12'
 }
 
 repositories {
