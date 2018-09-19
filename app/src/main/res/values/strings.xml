@@ -3,4 +3,6 @@
     <string name="connect">Conectar</string>
     <string name="bluetooth_connect">Conexão via Bluetooth</string>
     <string name="internet_connect">Conexão via Internet</string>
+    <string name="turn_on">Ligar</string>
+    <string name="offline">Offline</string>
 </resources>
