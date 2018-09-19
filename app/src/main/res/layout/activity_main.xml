@@ -7,7 +7,7 @@
     android:background="@android:color/white">
 
     <ImageView
-        android:id="@+id/icon_raspi"
+        android:id="@+id/icon_mqtt"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="@dimen/margin_default"
@@ -20,10 +20,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
+        app:srcCompat="@drawable/mqtt_icon" />
+
+    <TextView
+        android:id="@+id/text_mqtt_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/offline"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintEnd_toEndOf="@id/icon_mqtt"
+        app:layout_constraintStart_toStartOf="@id/icon_mqtt"
+        app:layout_constraintTop_toBottomOf="@id/icon_raspi" />
+
+    <ImageView
+        android:id="@+id/icon_raspi"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginLeft="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/icon_mqtt"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
         app:srcCompat="@drawable/raspberry_pi_3" />
 
     <TextView
-        android:id="@+id/text_raspi"
+        android:id="@+id/text_log"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_default"
@@ -43,6 +70,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/offline"
+        android:textColor="@android:color/holo_red_dark"
         app:layout_constraintEnd_toEndOf="@id/icon_raspi"
         app:layout_constraintStart_toStartOf="@id/icon_raspi"
         app:layout_constraintTop_toBottomOf="@id/icon_raspi" />

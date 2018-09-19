@@ -5,4 +5,7 @@
     <string name="internet_connect">Conexão via Internet</string>
     <string name="turn_on">Ligar</string>
     <string name="offline">Offline</string>
+    <string name="online">Online</string>
+    <string name="connection_stablished">Conexão estabelecida!</string>
+    <string name="connection_dropped">Conexão caiu...</string>
 </resources>
