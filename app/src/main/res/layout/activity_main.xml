@@ -49,20 +49,20 @@
         app:layout_constraintVertical_bias="0"
         app:srcCompat="@drawable/raspberry_pi_3" />
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/text_log"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginLeft="@dimen/margin_default"
         android:layout_marginEnd="@dimen/margin_default"
         android:layout_marginRight="@dimen/margin_default"
-        android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="@id/icon_raspi"
+        android:gravity="end|top"
+        app:layout_constraintBottom_toBottomOf="@id/text_raspi_status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon_raspi"
         app:layout_constraintTop_toTopOf="@id/icon_raspi"
-        tools:text="Texto de alguma coisa para colocar aqui..." />
+        tools:listitem="@layout/item_log" />
 
     <TextView
         android:id="@+id/text_raspi_status"

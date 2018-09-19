@@ -3,6 +3,8 @@ package br.edu.infnet.lightcontrol
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.fusesource.hawtbuf.Buffer
@@ -13,11 +15,21 @@ import org.fusesource.mqtt.client.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var connection: CallbackConnection
+    private lateinit var logAdapter: LogAdapter
     private lateinit var mqtt: MQTT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupLogRecycler()
+    }
+
+    private fun setupLogRecycler() {
+        logAdapter = LogAdapter()
+        text_log.setHasFixedSize(true)
+        text_log.layoutManager = LinearLayoutManager(this)
+        text_log.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+        text_log.adapter = logAdapter
     }
 
     override fun onResume() {
@@ -105,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         connection.publish("tcc_light_control_infnet", "command_is_raspberry_alive".toByteArray(), QoS.AT_LEAST_ONCE, false, object : Callback<Void> {
             override fun onSuccess(v: Void?) {
                 // the pubish operation completed successfully.
-                appLog("Procurando RaspBerry Pi 3...")
+                appLog("Esperando RaspBerry Pi 3...")
             }
 
             override fun onFailure(value: Throwable?) {
@@ -128,7 +140,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun appLog(msg: String) {
-        text_log.post { text_log.text = msg }
+        logAdapter.addLog(msg)
+        text_log.post { text_log.smoothScrollToPosition(logAdapter.itemCount) }
         Log.d("MQTT", msg)
     }
 }
