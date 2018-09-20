@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             override fun onConnected() {
                 text_mqtt_status.text = getString(R.string.online)
                 text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
-                appLog(getString(R.string.connection_stablished))
+                appLog("Conectado a iot.eclipse.org!")
             }
 
             override fun onPublish(topic: UTF8Buffer, payload: Buffer, ack: Runnable) {
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
             // Once we connect..
             override fun onSuccess(v: Void?) {
-                appLog("Contectado a iot.eclipse.org!")
+                appLog("Socket conectado!")
                 subscribeToTopic()
             }
         })
