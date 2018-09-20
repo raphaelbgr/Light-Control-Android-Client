@@ -140,8 +140,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun appLog(msg: String) {
-        logAdapter.addLog(msg)
-        text_log.post { text_log.smoothScrollToPosition(logAdapter.itemCount) }
+        runOnUiThread {
+            logAdapter.addLog(msg)
+            text_log.post { text_log.smoothScrollToPosition(logAdapter.itemCount) }
+        }
         Log.d("MQTT", msg)
     }
 }
