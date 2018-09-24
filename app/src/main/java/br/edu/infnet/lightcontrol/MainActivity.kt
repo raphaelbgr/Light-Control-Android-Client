@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 // You can now process a received message from a topic.
                 // Once process execute the ack runnable.
                 ack.run()
+                processCommand(payload.ascii().toString())
             }
 
             override fun onFailure(value: Throwable?) {
@@ -81,6 +82,18 @@ class MainActivity : AppCompatActivity() {
                 text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
             }
         })
+    }
+
+    private fun processCommand(command: String) {
+        when (command) {
+            "raspberry_pi_im_alive" -> setRaspBerryOnline()
+        }
+    }
+
+    private fun setRaspBerryOnline() {
+        text_raspi_status.text = getString(R.string.online)
+        text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
+        appLog("Raspberry Pi3 Online!")
     }
 
     private fun connectMqtt() {
@@ -103,7 +116,7 @@ class MainActivity : AppCompatActivity() {
             override fun onSuccess(qoses: ByteArray?) {
                 // The result of the subcribe request.
                 appLog("Inscrito no tópico tcc_light_control_infnet!")
-                searchRaspBerry()
+                sendCommand("command_is_raspberry_alive")
             }
 
             override fun onFailure(value: Throwable?) {
@@ -112,12 +125,13 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun searchRaspBerry() {
+    private fun sendCommand(command: String) {
         // Send a message to a topic
-        connection.publish("tcc_light_control_infnet", "command_is_raspberry_alive".toByteArray(), QoS.AT_LEAST_ONCE, false, object : Callback<Void> {
+        connection.publish("tcc_light_control_infnet", command.toByteArray(), QoS.AT_LEAST_ONCE, false, object : Callback<Void> {
             override fun onSuccess(v: Void?) {
                 // the pubish operation completed successfully.
-                appLog("Esperando RaspBerry Pi 3...")
+                appLog("Esperando Raspberry Pi 3...")
+
             }
 
             override fun onFailure(value: Throwable?) {
