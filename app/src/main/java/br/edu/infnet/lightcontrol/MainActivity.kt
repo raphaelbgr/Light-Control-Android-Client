@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import br.edu.infnet.lightcontrol.model.Payload
+import br.edu.infnet.lightcontrol.model.ServerResponse
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.fusesource.hawtbuf.Buffer
 import org.fusesource.hawtbuf.UTF8Buffer
@@ -53,6 +56,10 @@ class MainActivity : AppCompatActivity() {
     private fun createMqttCallbackConnection() {
         connection = mqtt.callbackConnection()
         connection.listener(object : Listener {
+            override fun onPublish(topic: UTF8Buffer, payload: Buffer, ack: Runnable) {
+                ack.run()
+                processCommand(payload.utf8().toString())
+            }
 
             override fun onDisconnected() {
                 text_mqtt_status.text = getString(R.string.offline)
@@ -66,13 +73,7 @@ class MainActivity : AppCompatActivity() {
                 text_mqtt_status.text = getString(R.string.online)
                 text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
                 appLog("Conectado a iot.eclipse.org!")
-            }
-
-            override fun onPublish(topic: UTF8Buffer, payload: Buffer, ack: Runnable) {
-                // You can now process a received message from a topic.
-                // Once process execute the ack runnable.
-                ack.run()
-                processCommand(payload.ascii().toString())
+                subscribeToTopic()
             }
 
             override fun onFailure(value: Throwable?) {
@@ -86,14 +87,41 @@ class MainActivity : AppCompatActivity() {
 
     private fun processCommand(command: String) {
         when (command) {
-            "raspberry_pi_im_alive" -> setRaspBerryOnline()
+            "raspberry_pi_im_alive" -> {
+                setRaspBerryOnline()
+                fetchBuilding(1)
+            }
         }
+        if (command.contains("fetch_building_id_response")) {
+            appLog("Configurações recebidas!")
+            val json = command.replace("fetch_building_id_response", "")
+            val payload: Payload? = Gson().fromJson(json, ServerResponse::class.java)?.payload
+            Log.d("JSON", payload.toString())
+            if (payload != null) {
+                runOnUiThread {
+                    title = payload.name
+                    setupLightControlRecycler(payload)
+                }
+            }
+        }
+    }
+
+    private fun setupLightControlRecycler(payload: Payload) {
+        val adapter = LightControlAdapter()
+        light_list.setHasFixedSize(true)
+        light_list.adapter = adapter
+        adapter.addToArray(payload)
+    }
+
+    private fun fetchBuilding(id: Int) {
+        appLog("Requisitando configurações do condomínio...")
+        sendCommand("fetch_building_id_$id")
     }
 
     private fun setRaspBerryOnline() {
         text_raspi_status.text = getString(R.string.online)
         text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
-        appLog("Raspberry Pi3 Online!")
+        appLog("Raspberry Pi 3 Online!")
     }
 
     private fun connectMqtt() {
@@ -105,7 +133,6 @@ class MainActivity : AppCompatActivity() {
             // Once we connect..
             override fun onSuccess(v: Void?) {
                 appLog("Socket conectado!")
-                subscribeToTopic()
             }
         })
     }
@@ -116,6 +143,7 @@ class MainActivity : AppCompatActivity() {
             override fun onSuccess(qoses: ByteArray?) {
                 // The result of the subcribe request.
                 appLog("Inscrito no tópico tcc_light_control_infnet!")
+                appLog("Procurando Raspberry Pi 3...")
                 sendCommand("command_is_raspberry_alive")
             }
 
@@ -130,8 +158,6 @@ class MainActivity : AppCompatActivity() {
         connection.publish("tcc_light_control_infnet", command.toByteArray(), QoS.AT_LEAST_ONCE, false, object : Callback<Void> {
             override fun onSuccess(v: Void?) {
                 // the pubish operation completed successfully.
-                appLog("Esperando Raspberry Pi 3...")
-
             }
 
             override fun onFailure(value: Throwable?) {
