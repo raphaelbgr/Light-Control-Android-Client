@@ -27,6 +27,7 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
                 }
             }
         }
+        notifyDataSetChanged()
     }
 
     fun setPowerButtonClickListener(listener : PowerLightButtonClick) {
@@ -43,6 +44,10 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
 
     override fun onBindViewHolder(holder: LightControlAdapter.LightViewHolder, position: Int) {
         holder.bind(controlledLights[position], lightButtonListener)
+    }
+
+    fun clearArray() {
+        controlledLights.clear()
     }
 
     class LightViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {

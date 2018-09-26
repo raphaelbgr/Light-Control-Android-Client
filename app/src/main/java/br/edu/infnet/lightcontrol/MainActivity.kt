@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
 
     private lateinit var logAdapter: LogAdapter
     private lateinit var mqtt: MQTT
+    private lateinit var adapter: LightControlAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -123,10 +125,13 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     }
 
     private fun setupLightControlRecycler(payload: Payload) {
-        val adapter = LightControlAdapter()
-        adapter.setPowerButtonClickListener(this)
-        light_list.setHasFixedSize(true)
-        light_list.adapter = adapter
+        if (!::adapter.isInitialized) {
+            adapter = LightControlAdapter()
+            adapter.setPowerButtonClickListener(this)
+            light_list.setHasFixedSize(true)
+            light_list.adapter = adapter
+        }
+        adapter.clearArray()
         adapter.addToArray(payload)
     }
 
