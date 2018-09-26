@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.item_light.view.*
 class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHolder>() {
 
     private val controlledLights: ArrayList<ControlledLight> = ArrayList()
+    lateinit var lightButtonListener : PowerLightButtonClick
 
     fun addToArray(payload: Payload) {
         for (block in payload.blocks) {
@@ -28,6 +29,10 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
         }
     }
 
+    fun setPowerButtonClickListener(listener : PowerLightButtonClick) {
+        lightButtonListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LightControlAdapter.LightViewHolder {
         return LightViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_light, parent, false))
     }
@@ -37,12 +42,12 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
     }
 
     override fun onBindViewHolder(holder: LightControlAdapter.LightViewHolder, position: Int) {
-        holder.bind(controlledLights[position])
+        holder.bind(controlledLights[position], lightButtonListener)
     }
 
     class LightViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(controlledLight: ControlledLight?) {
+        fun bind(controlledLight: ControlledLight?, lightButtonListener : PowerLightButtonClick?) {
             itemView?.text_light_status?.text = controlledLight?.area
             itemView?.text_light_block?.text = controlledLight?.blockName
             itemView?.text_light_floor?.text = controlledLight?.floorName
@@ -50,6 +55,7 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
                 itemView?.button_action_light?.text = itemView.context.getString(R.string.turn_off)
                 itemView?.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.white))
                 itemView?.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_on))
+                itemView?.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight, false) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     itemView?.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_red)
                 }
@@ -57,12 +63,16 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
                 itemView?.button_action_light?.text = itemView.context.getString(R.string.turn_on)
                 itemView?.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_off))
                 itemView?.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.black))
+                itemView?.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight!!, true) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     itemView?.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_green)
                 }
             }
-
         }
     }
 
+}
+
+interface PowerLightButtonClick {
+    fun onPowerButtonClick(controlledLight: ControlledLight, turnOn: Boolean)
 }

@@ -11,7 +11,7 @@ public class ControlledLight implements Parcelable {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("area")
     @Expose
     private String area;
@@ -40,7 +40,7 @@ public class ControlledLight implements Parcelable {
         if (in.readByte() == 0) {
             id = null;
         } else {
-            id = in.readInt();
+            id = in.readString();
         }
         area = in.readString();
         type = in.readString();
@@ -65,15 +65,15 @@ public class ControlledLight implements Parcelable {
         }
     };
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public ControlledLight withId(Integer id) {
+    public ControlledLight withId(String id) {
         this.id = id;
         return this;
     }
@@ -167,7 +167,7 @@ public class ControlledLight implements Parcelable {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeInt(id);
+            dest.writeString(id);
         }
         dest.writeString(area);
         dest.writeString(type);

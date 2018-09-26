@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
+import br.edu.infnet.lightcontrol.model.ControlledLight
 import br.edu.infnet.lightcontrol.model.Payload
 import br.edu.infnet.lightcontrol.model.ServerResponse
 import com.google.gson.Gson
@@ -16,12 +17,11 @@ import org.fusesource.hawtbuf.UTF8Buffer
 import org.fusesource.mqtt.client.*
 
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     private lateinit var connection: CallbackConnection
+
     private lateinit var logAdapter: LogAdapter
     private lateinit var mqtt: MQTT
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupLightControlRecycler(payload: Payload) {
         val adapter = LightControlAdapter()
+        adapter.setPowerButtonClickListener(this)
         light_list.setHasFixedSize(true)
         light_list.adapter = adapter
         adapter.addToArray(payload)
@@ -174,14 +175,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendCommand(command: String) {
+        sendCommand(command, null, null)
+    }
+
+    private fun sendCommand(command: String, successMsg: String?, failMsg: String?) {
         // Send a message to a topic
         connection.publish("tcc_light_control_infnet", command.toByteArray(), QoS.AT_LEAST_ONCE, false, object : Callback<Void> {
             override fun onSuccess(v: Void?) {
-                // the pubish operation completed successfully.
+                if (successMsg != null) {
+                    appLog(successMsg)
+                }
             }
 
             override fun onFailure(value: Throwable?) {
-//                connection.close(null) // publish failed.
+                if (failMsg != null) {
+                    appLog(failMsg)
+                }
             }
         })
 
@@ -206,4 +215,15 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("MQTT", msg)
     }
+
+    override fun onPowerButtonClick(controlledLight: ControlledLight, turnOn: Boolean) =
+            if (turnOn) {
+                sendCommand("command_turn_light_on_id_" + controlledLight.id,
+                        "Requisitando ação para ligar " + controlledLight.area + "...",
+                        "Falha ao tentar desligar luz de " + controlledLight.area)
+            } else {
+                sendCommand("command_turn_light_off_id_" + controlledLight.id,
+                        "Requisitando ação para desligar " + controlledLight.area + "...",
+                        "Falha ao tentar desligar luz de " + controlledLight.area)
+            }
 }
