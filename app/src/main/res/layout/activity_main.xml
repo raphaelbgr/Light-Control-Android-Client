@@ -88,8 +88,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_raspi_status"
         app:spanCount="2"
-        tools:listitem="@layout/item_light">
+        tools:listitem="@layout/item_light" />
 
-    </android.support.v7.widget.RecyclerView>
+    <ProgressBar
+        android:id="@+id/progress_view"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="@dimen/margin_default"
+        android:layout_marginRight="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_raspi_status"
+        tools:visibility="visible">
+
+    </ProgressBar>
 
 </android.support.constraint.ConstraintLayout>

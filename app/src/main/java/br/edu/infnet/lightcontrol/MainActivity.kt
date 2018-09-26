@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.View
 import br.edu.infnet.lightcontrol.model.Payload
 import br.edu.infnet.lightcontrol.model.ServerResponse
 import com.google.gson.Gson
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity() {
         text_log.layoutManager = LinearLayoutManager(this)
         text_log.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         text_log.adapter = logAdapter
+        appLog("Inicializando...")
+        progress_view.visibility = View.VISIBLE
+        light_list.isEnabled = false
     }
 
     override fun onResume() {
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        progress_view.visibility = View.GONE
+        light_list.isEnabled = true
         disconnectMqtt()
     }
 
@@ -67,6 +73,10 @@ class MainActivity : AppCompatActivity() {
                 text_raspi_status.text = getString(R.string.offline)
                 text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
                 appLog(getString(R.string.connection_dropped))
+                runOnUiThread {
+                    progress_view.visibility = View.GONE
+                    light_list.isEnabled = true
+                }
             }
 
             override fun onConnected() {
@@ -81,6 +91,10 @@ class MainActivity : AppCompatActivity() {
                 text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
                 text_raspi_status.text = getString(R.string.offline)
                 text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
+                runOnUiThread {
+                    progress_view.visibility = View.GONE
+                    light_list.isEnabled = false
+                }
             }
         })
     }
@@ -101,6 +115,8 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     title = payload.name
                     setupLightControlRecycler(payload)
+                    progress_view.visibility = View.GONE
+                    light_list.isEnabled = true
                 }
             }
         }
@@ -115,6 +131,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchBuilding(id: Int) {
         appLog("Requisitando configurações do condomínio...")
+        runOnUiThread {
+            progress_view.visibility = View.VISIBLE
+            light_list.isEnabled = false
+        }
         sendCommand("fetch_building_id_$id")
     }
 
