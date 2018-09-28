@@ -122,6 +122,9 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
                 }
             }
         }
+        if (command.contains("server_message")) {
+            appLog(command.replace("server_message_", ""))
+        }
     }
 
     private fun setupLightControlRecycler(payload: Payload) {
