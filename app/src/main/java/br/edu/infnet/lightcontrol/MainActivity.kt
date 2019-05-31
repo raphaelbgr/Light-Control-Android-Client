@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
 
     private fun createMqttCallbackConnection() {
         connection = mqtt.callbackConnection()
+        appLog("Abrindo conexão MQQT com iot.eclipse.org...")
         connection.listener(object : Listener {
             override fun onPublish(topic: UTF8Buffer, payload: Buffer, ack: Runnable) {
                 ack.run()

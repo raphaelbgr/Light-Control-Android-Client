@@ -19,7 +19,7 @@ class LogAdapter : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
-        holder.bind(logList.get(position))
+        holder.bind(logList[position])
     }
 
     fun addLog(msg: String) {
@@ -27,10 +27,10 @@ class LogAdapter : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
         notifyDataSetChanged()
     }
 
-    class LogViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(text: String?) {
-            itemView?.item_log_text?.text = text
+            itemView.item_log_text?.text = text
         }
     }
 

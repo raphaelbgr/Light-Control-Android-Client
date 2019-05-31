@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_light.view.*
 class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHolder>() {
 
     private val controlledLights: ArrayList<ControlledLight> = ArrayList()
-    lateinit var lightButtonListener : PowerLightButtonClick
+    private lateinit var lightButtonListener: PowerLightButtonClick
 
     fun addToArray(payload: Payload) {
         for (block in payload.blocks) {
@@ -30,11 +30,11 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
         notifyDataSetChanged()
     }
 
-    fun setPowerButtonClickListener(listener : PowerLightButtonClick) {
+    fun setPowerButtonClickListener(listener: PowerLightButtonClick) {
         lightButtonListener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LightControlAdapter.LightViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LightViewHolder {
         return LightViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_light, parent, false))
     }
 
@@ -42,7 +42,7 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
         return controlledLights.size
     }
 
-    override fun onBindViewHolder(holder: LightControlAdapter.LightViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LightViewHolder, position: Int) {
         holder.bind(controlledLights[position], lightButtonListener)
     }
 
@@ -50,27 +50,27 @@ class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHo
         controlledLights.clear()
     }
 
-    class LightViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class LightViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(controlledLight: ControlledLight?, lightButtonListener : PowerLightButtonClick?) {
-            itemView?.text_light_status?.text = controlledLight?.area
-            itemView?.text_light_block?.text = controlledLight?.blockName
-            itemView?.text_light_floor?.text = controlledLight?.floorName
+        fun bind(controlledLight: ControlledLight?, lightButtonListener: PowerLightButtonClick?) {
+            itemView.text_light_status?.text = controlledLight?.area
+            itemView.text_light_block?.text = controlledLight?.blockName
+            itemView.text_light_floor?.text = controlledLight?.floorName
             if (controlledLight?.state == 1) {
-                itemView?.button_action_light?.text = itemView.context.getString(R.string.turn_off)
-                itemView?.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.white))
-                itemView?.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_on))
-                itemView?.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight, false) }
+                itemView.button_action_light?.text = itemView.context.getString(R.string.turn_off)
+                itemView.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.white))
+                itemView.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_on))
+                itemView.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight, false) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    itemView?.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_red)
+                    itemView.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_red)
                 }
             } else {
-                itemView?.button_action_light?.text = itemView.context.getString(R.string.turn_on)
-                itemView?.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_off))
-                itemView?.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.black))
-                itemView?.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight!!, true) }
+                itemView.button_action_light?.text = itemView.context.getString(R.string.turn_on)
+                itemView.image_light_status?.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_light_off))
+                itemView.button_action_light?.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.black))
+                itemView.button_action_light?.setOnClickListener { lightButtonListener?.onPowerButtonClick(controlledLight!!, true) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    itemView?.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_green)
+                    itemView.button_action_light?.background = ContextCompat.getDrawable(itemView.context, R.drawable.background_list_item_green)
                 }
             }
         }
