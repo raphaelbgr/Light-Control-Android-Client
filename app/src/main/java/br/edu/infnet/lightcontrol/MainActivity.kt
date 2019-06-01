@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
 
     private fun createMqttCallbackConnection() {
         connection = mqtt.callbackConnection()
-        appLog("Abrindo conexão MQQT com iot.eclipse.org...")
         connection.listener(object : Listener {
             override fun onPublish(topic: UTF8Buffer, payload: Buffer, ack: Runnable) {
                 ack.run()
@@ -157,12 +156,12 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     private fun connectMqtt() {
         connection.connect(object : Callback<Void> {
             override fun onFailure(value: Throwable?) {
-                appLog("Falha na tentativa de conexão com iot.eclipse.org")
+                appLog("Falha na conexão com MQTT.")
             }
 
             // Once we connect..
             override fun onSuccess(v: Void?) {
-                appLog("Socket conectado!")
+                appLog("MQTT conectado!")
             }
         })
     }
@@ -209,10 +208,12 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
         connection.disconnect(object : Callback<Void> {
             override fun onSuccess(v: Void?) {
                 // called once the connection is disconnected.
+                appLog("MQTT desconectado.")
             }
 
             override fun onFailure(value: Throwable?) {
                 // Disconnects never fail.
+                appLog("MQTT desconectado com erro.")
             }
         })
     }
