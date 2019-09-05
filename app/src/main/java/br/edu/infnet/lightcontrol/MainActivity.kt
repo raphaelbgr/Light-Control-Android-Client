@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     private lateinit var mqtt: MQTT
     private lateinit var adapter: LightControlAdapter
 
+    private val HOST: String = "mqtt.eclipse.org"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
 
     private fun setupMqttClient() {
         mqtt = MQTT()
-        mqtt.setHost("iot.eclipse.org", 1883)
+        mqtt.setHost(HOST, 1883)
         mqtt.willQos = QoS.AT_LEAST_ONCE
     }
 
@@ -70,32 +72,38 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
             }
 
             override fun onDisconnected() {
-                text_mqtt_status.text = getString(R.string.offline)
-                text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
-                text_raspi_status.text = getString(R.string.offline)
-                text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
-                appLog(getString(R.string.connection_dropped))
                 runOnUiThread {
-                    progress_view.visibility = View.GONE
-                    light_list.isEnabled = true
+                    text_mqtt_status.text = getString(R.string.offline)
+                    text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
+                    text_raspi_status.text = getString(R.string.offline)
+                    text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
+                    appLog(getString(R.string.connection_dropped))
+                    runOnUiThread {
+                        progress_view.visibility = View.GONE
+                        light_list.isEnabled = true
+                    }
                 }
             }
 
             override fun onConnected() {
-                text_mqtt_status.text = getString(R.string.online)
-                text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
-                appLog("Conectado a iot.eclipse.org!")
-                subscribeToTopic()
+                runOnUiThread {
+                    text_mqtt_status.text = getString(R.string.online)
+                    text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
+                    appLog("Conectado a $HOST")
+                    subscribeToTopic()
+                }
             }
 
             override fun onFailure(value: Throwable?) {
-                text_mqtt_status.text = getString(R.string.offline)
-                text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
-                text_raspi_status.text = getString(R.string.offline)
-                text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
                 runOnUiThread {
-                    progress_view.visibility = View.GONE
-                    light_list.isEnabled = false
+                    text_mqtt_status.text = getString(R.string.offline)
+                    text_mqtt_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
+                    text_raspi_status.text = getString(R.string.offline)
+                    text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, android.R.color.holo_red_dark))
+                    runOnUiThread {
+                        progress_view.visibility = View.GONE
+                        light_list.isEnabled = false
+                    }
                 }
             }
         })
@@ -148,15 +156,19 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     }
 
     private fun setRaspBerryOnline() {
-        text_raspi_status.text = getString(R.string.online)
-        text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
-        appLog("Raspberry Pi 3 Online!")
+        runOnUiThread {
+            text_raspi_status.text = getString(R.string.online)
+            text_raspi_status.setTextColor(ContextCompat.getColor(text_mqtt_status.context, R.color.green))
+            appLog("Raspberry Pi 3 Online!")
+        }
     }
 
     private fun connectMqtt() {
+        appLog("Conectando MQTT...")
         connection.connect(object : Callback<Void> {
             override fun onFailure(value: Throwable?) {
                 appLog("Falha na conexão com MQTT.")
+                connectMqtt()
             }
 
             // Once we connect..
