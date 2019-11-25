@@ -1,11 +1,11 @@
 package br.edu.infnet.lightcontrol
 
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import br.edu.infnet.lightcontrol.model.ControlledLight
 import br.edu.infnet.lightcontrol.model.Payload
 import kotlinx.android.synthetic.main.item_light.view.*

@@ -1,6 +1,6 @@
 package br.edu.infnet.lightcontrol
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 //import br.edu.infnet.lightcontrol.model.ServerResponse
 
