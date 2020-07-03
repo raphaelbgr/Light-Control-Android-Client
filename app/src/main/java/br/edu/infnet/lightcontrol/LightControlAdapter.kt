@@ -10,7 +10,7 @@ import br.edu.infnet.lightcontrol.model.ControlledLight
 import br.edu.infnet.lightcontrol.model.Payload
 import kotlinx.android.synthetic.main.item_light.view.*
 
-class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHolder>() {
+open class LightControlAdapter : RecyclerView.Adapter<LightControlAdapter.LightViewHolder>() {
 
     private val controlledLights: ArrayList<ControlledLight> = ArrayList()
     private lateinit var lightButtonListener: PowerLightButtonClick

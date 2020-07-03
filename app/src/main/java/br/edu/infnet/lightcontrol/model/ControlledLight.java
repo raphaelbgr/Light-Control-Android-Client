@@ -36,6 +36,9 @@ public class ControlledLight implements Parcelable {
     public transient String blockName;
     public transient String floorName;
 
+    public ControlledLight() {
+    }
+
     protected ControlledLight(Parcel in) {
         if (in.readByte() == 0) {
             id = null;

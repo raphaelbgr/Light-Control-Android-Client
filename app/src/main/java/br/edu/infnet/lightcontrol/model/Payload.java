@@ -24,6 +24,9 @@ public class Payload implements Parcelable {
     @SerializedName("address")
     @Expose
     private Address address;
+    @SerializedName("master_switch_state")
+    @Expose
+    private boolean masterSwitchState;
     @SerializedName("blocks")
     @Expose
     private List<Block> blocks = new ArrayList<Block>();
@@ -141,5 +144,13 @@ public class Payload implements Parcelable {
                 ", address=" + address +
                 ", blocks=" + blocks +
                 '}';
+    }
+
+    public boolean isMasterSwitchState() {
+        return masterSwitchState;
+    }
+
+    public void setMasterSwitchState(boolean masterSwitchState) {
+        this.masterSwitchState = masterSwitchState;
     }
 }

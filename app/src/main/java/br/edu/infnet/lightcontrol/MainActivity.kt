@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.infnet.lightcontrol.model.ControlledLight
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
     private lateinit var logAdapter: LogAdapter
     private lateinit var mqtt: MQTT
     private lateinit var adapter: LightControlAdapter
+    private lateinit var extraAdapter: ExtraFunctionalityAdapter
+    private lateinit var mergeAdapter: ConcatAdapter
 
     private val HOST: String = "mqtt.eclipse.org"
 
@@ -140,8 +143,24 @@ class MainActivity : AppCompatActivity(), PowerLightButtonClick {
             adapter = LightControlAdapter()
             adapter.setPowerButtonClickListener(this)
             light_list.setHasFixedSize(true)
-            light_list.adapter = adapter
+            extraAdapter = ExtraFunctionalityAdapter()
+            extraAdapter.setPowerButtonClickListener(object : PowerLightSwitchClick {
+                override fun onPowerButtonClick(turnOn: Boolean) {
+                    if (turnOn) {
+                        sendCommand("command_turn_master_switch_on",
+                                "Requisitando ação para ligar INTERRUPTOR MESTRE!",
+                                "Falha ao tentar ligar interruptor mestre...")
+                    } else {
+                        sendCommand("command_turn_master_switch_off",
+                                "Requisitando ação para desligar INTERRUPTOR MESTRE!",
+                                "Falha ao tentar desligar interruptor mestre...")
+                    }
+                }
+            })
+            mergeAdapter = ConcatAdapter(extraAdapter, adapter)
+            light_list.adapter = mergeAdapter
         }
+        extraAdapter.setMasterSwitchState(payload.isMasterSwitchState)
         adapter.clearArray()
         adapter.addToArray(payload)
     }
